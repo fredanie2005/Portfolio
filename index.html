@@ -1,500 +1,336 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Portfolio — Mathis Rota</title>
-  <style>
-    :root{
-      --bg: #ffffff;
-      --panel: rgba(255,255,255,0.75);
-      --muted: #8b8b8b;
-      --accent: rgba(0,0,0,0.06);
-      --glass: rgba(255,255,255,0.6);
-      --shadow: 0 8px 30px rgba(16,24,40,0.06);
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-    }
-
-    html,body{margin:0;padding:0;height:100%;background:var(--bg);color:#111;overflow-x:hidden}
-
-    .stage{position:fixed;inset:0;overflow:hidden;z-index:0}
-    canvas{display:block;width:100%;height:100%}
-
-    /* intro */
-    .intro{
-      position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-      background:#fff;z-index:1000;transition:opacity 1s ease;opacity:1;
-    }
-    .intro.hide{opacity:0;pointer-events:none}
-    .intro h1{font-size:2.5rem;font-weight:700;color:#111;animation:fadeUp 1.2s ease both}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-
-    /* main content */
-    .wrap{position:relative;z-index:10;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}
-    .card{
-      width:100%;
-      max-width:1200px;
-      background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,250,250,0.85));
-      backdrop-filter:blur(6px);
-      border-radius:16px;
-      box-shadow:var(--shadow);
-      padding:2rem;
-    }
-
-    h1{text-align:center;font-size:2rem;margin:0 0 .5rem}
-    p.lead{text-align:center;font-size:1.1rem;color:var(--muted);margin:0 0 2rem}
-
-    .main-content{display:grid;grid-template-columns:1fr;gap:2rem}
-
-    /* about */
-    .about-section{
-      padding:1.5rem;
-      background:var(--glass);
-      border-radius:12px;
-      border:1px solid rgba(0,0,0,0.03);
-      box-shadow:0 6px 20px rgba(10,10,10,0.03);
-    }
-    .about-section h2{margin:0 0 1rem;font-size:1.5rem}
-    .about-section p{line-height:1.6;color:var(--muted);margin:0 0 1rem}
-
-    /* projects carousel */
-    .projects-carousel {
-      max-width: 450px; /* ou ce qui te convient */
-      margin-left: auto; /* centre si l'espace libre */
-      margin-right: 0;
-        position: relative; 
-    }
-
-    .carousel-container{overflow:hidden;border-radius:12px}
-    .carousel-track{display:flex;transition:transform .5s ease}
-    .carousel-slide{flex:0 0 100%;box-sizing:border-box}
-    .project-card{
-      background:var(--glass);
-      border-radius:12px;
-      box-shadow:0 6px 20px rgba(10,10,10,0.03);
-      border:1px solid rgba(0,0,0,0.03);
-      display:flex;flex-direction:column;height:100%;
-    }
-    .project-image-container{position:relative;width:100%;padding-top:56.25%}
-    .project-image{
-      position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover
-    }
-    .project-content{padding:1.5rem;display:flex;flex-direction:column;flex-grow:1}
-    .project-content h3{margin:0 0 .75rem;font-size:1.3rem}
-    .project-content p{flex-grow:1;font-size:.95rem;color:var(--muted);margin:0 0 1rem}
-    .project-tech{display:flex;flex-wrap:wrap;gap:.5rem;font-size:.85rem}
-    .project-tech span{background:rgba(0,0,0,0.05);padding:.25rem .5rem;border-radius:4px}
-
-    .carousel-button{
-      position:absolute;top:40%;transform:translateY(-50%);
-      background:var(--glass);border:1px solid rgba(0,0,0,0.1);
-      width:40px;height:40px;border-radius:50%;
-      display:flex;align-items:center;justify-content:center;
-      cursor:pointer;box-shadow:var(--shadow);font-weight:bold
-    }
-    .carousel-button.prev{left:10px}
-    .carousel-button.next{right:10px}
-    
-    /* CORRECTION DES DOTS DU CAROUSEL */
-    .carousel-dots{
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      gap:10px;
-      margin-top:1rem;
-      padding:0.5rem 0;
-    }
-    .carousel-dot{
-      width:10px;
-      height:10px;
-      min-width:10px;  /* Empêche la compression */
-      min-height:10px; /* Empêche la compression */
-      border-radius:50%;
-      background:var(--muted);
-      opacity:.3;
-      cursor:pointer;
-      border:none;
-      padding:0;
-      flex-shrink:0; /* Empêche la déformation par le flex */
-      transition:all 0.2s ease;
-      box-sizing:border-box;
-    }
-    .carousel-dot.active{
-      opacity:1;
-      transform:scale(1.2);
-      background:#111;
-    }
-    .carousel-dot:hover{
-      opacity:0.7;
-    }
-
-    /* responsive */
-    @media(min-width:768px){
-      .main-content{grid-template-columns:1fr 1fr}
-      .intro h1{font-size:3rem}
-      h1{font-size:2.5rem}
-      p.lead{font-size:1.2rem}
-      
-      /* Dots légèrement plus gros sur desktop */
-      .carousel-dot{
-        width:12px;
-        height:12px;
-        min-width:12px;
-        min-height:12px;
-      }
-    }
-
-    footer{
-      position:fixed;left:12px;bottom:12px;
-      font-size:12px;color:var(--muted);
-      background:rgba(255,255,255,0.6);
-      padding:6px 10px;border-radius:8px;
-      border:1px solid rgba(0,0,0,0.03);z-index:20
-    }
-
-    a {
-  display: inline-block;
-  padding: 4px 12px;       /* Plus petit que précédemment */
-  margin: 2px;
-  text-decoration: none;
-  color: #000;             /* Couleur du texte */
-  border: 1.5px solid #000; /* Contour fin pour effet bouton */
-  border-radius: 6px;      /* Coins légèrement arrondis */
-  font-size: 0.9rem;       /* Texte plus petit */
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-a:hover {
-  background-color: #000;  /* Fond au survol */
-  color: #fff;             /* Texte blanc au survol */
-  transform: scale(1.03);  /* Petit effet de zoom */
-}
-
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PORTFOLIO.EXE</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="img/icons/computer-1.png" />
 </head>
 <body>
-  <!-- intro -->
-  <div class="intro" id="intro"><h1>Bienvenue sur mon Portfolio</h1></div>
 
-  <div class="stage"><canvas id="bgCanvas"></canvas></div>
+  <!-- BOOT SCREEN -->
+  <div id="boot">
+    <div class="boot-inner">
+      <pre class="boot-log" id="boot-log"></pre>
+      <div class="boot-cursor">_</div>
+    </div>
+  </div>
 
-<main class="wrap">
-  <section class="card">
-    <h1>Mathis Rota</h1>
-    <p class="lead">Développeur et créateur de jeux vidéo passionné.</p>
+  <!-- DESKTOP -->
+  <div id="desktop" class="hidden">
 
-    <div class="main-content">
-      <!-- About -->
-      <div class="about-section">
-        <h2>À propos de moi</h2>
-        <p>Je suis passionné par le développement et la création de jeux vidéo. Actuellement en Bachelor Développeur Informatique, spécialisation Jeux Vidéo, je combine codage et créativité pour réaliser des expériences ludiques uniques.</p>
-        <p>J'adore imaginer et concevoir des jeux originaux, en mettant l'accent sur le gameplay et l'interaction. Mon domaine de prédilection est le développement, mais je touche également à la modélisation et à l'intégration graphique.</p>
-        
-        <div class="social-links">
-          <a href="https://www.linkedin.com/in/mathis-rota/" target="_blank" rel="noopener noreferrer">LinkedIn</a> |
-          <a href="https://github.com/fredanie2005" target="_blank" rel="noopener noreferrer">GitHub</a> |
-          <a href="https://www.youtube.com/@masterroyal_" target="_blank" rel="noopener noreferrer">YouTube</a>
-        </div>
+    <!-- DESKTOP ICONS -->
+    <div class="desktop-icons">
+      <div class="dicon" data-window="about">
+        <img src="img/icons/computer-3.png" alt="" draggable="false" />
+        <span>Mon&nbsp;Ordinateur</span>
       </div>
-
-
-      <!-- Projects -->
-      <div class="projects-carousel">
-        <div class="carousel-container">
-          <div class="carousel-track" id="carousel-track">
-            <!-- Slides -->
-            <div class="carousel-slide">
-              <div class="project-card">
-                <div class="project-image-container">
-                  <img src="img/sekai.gif" alt="Jeu de Rythme" class="project-image">
-                </div>
-                <div class="project-content">
-                  <h3>Jeu de Rythme</h3>
-                  <p>Développé en solo sur deux mois, ce jeu de rythme propose un gameplay sur 4 lignes où il faut toucher ou maintenir les notes au rythme de la musique. Il inclut un éditeur de niveaux complet pour créer vos propres morceaux. </p><p><a href="https://github.com/fredanie2005/SekaiRemake">Télécharger</a></p>
-                  <div class="project-tech"><span>C++</span><span>Raylib</span></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="carousel-slide">
-              <div class="project-card">
-                <div class="project-image-container"><img src="img/breakout.gif" alt="Casse Brique" class="project-image"></div>
-                <div class="project-content">
-                  <h3>Casse Brique</h3>
-                  <p>Version moderne du casse-brique classique, avec un système de personnages offrant différents pouvoirs. Comprend également un éditeur de niveaux intégré.</p>
-                  <div class="project-tech"><span>C++</span><span>SFML</span></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="carousel-slide">
-              <div class="project-card">
-                <div class="project-image-container"><img src="img/vampire.gif" alt="Roguelike Shooter" class="project-image"></div>
-                <div class="project-content">
-                  <h3>Vampire Survivor</h3>
-                  <p>Roguelike shooter inspiré de Vampire Survivors où il faut survivre à des vagues d'ennemis. Débloquez de nouvelles armes, compétences et passifs via un arbre de compétences, le tout dans une histoire décalée et immersive.</p>
-                  <div class="project-tech"><span>C++</span><span>SFML</span><span>ECS</span></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="carousel-slide">
-              <div class="project-card">
-                <div class="project-image-container"><img src="img/shootemup.gif" alt="Shoot em Up" class="project-image"></div>
-                <div class="project-content">
-                  <h3>Shoot em Up</h3>
-                  <p>Mini-projet de maquette d’un shoot 'em up sur le thème des voitures anciennes pour le musée Malartre à Lyon. Affrontez divers ennemis (missiles guidés, phares aveuglants, boss) dans un gameplay bullet hell avec plusieurs compétences.</p>
-                  <div class="project-tech"><span>C++</span><span>SFML</span></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="carousel-slide">
-              <div class="project-card">
-                <div class="project-image-container"><img src="img/engine.gif" alt="Moteur 3D" class="project-image"></div>
-                <div class="project-content">
-                  <h3>Moteur 3D</h3>
-                  <p>Création d’un moteur de jeu vidéo from scratch en C++ avec DirectX. Intègre un système ECS pour gérer efficacement les différents objets affichés à l’écran.</p>
-                  <div class="project-tech"><span>C++</span><span>DirectX 12</span><span>ECS</span></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="carousel-slide">
-              <div class="project-card">
-                <div class="project-image-container"><img src="img/multiplayer.png" alt="Multijoueur" class="project-image"></div>
-                <div class="project-content">
-                  <h3>Multijoueur</h3>
-                  <p>Petit projet multijoueur utilisant Winsock2 où plusieurs clients interagissent simultanément sur un serveur.</p>
-                  <div class="project-tech"><span>C++</span><span>Winsock2</span></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="carousel-slide">
-              <div class="project-card">
-                <div class="project-image-container"><img src="img/blender.webp" alt="Modélisation 3D" class="project-image"></div>
-                <div class="project-content">
-                  <h3>Modélisation 3D</h3>
-                  <p>Apprentissage des bases de Blender pour créer et produire mes propres assets 3D, en maîtrisant la modélisation et le rendu.</p>
-                  <div class="project-tech"><span>Blender</span></div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <button class="carousel-button prev" id="prev-btn">&lt;</button>
-        <button class="carousel-button next" id="next-btn">&gt;</button>
-        <div class="carousel-dots" id="carousel-dots"></div>
+      <div class="dicon" data-window="projects">
+        <img src="img/icons/briefcase-3.png" alt="" draggable="false" />
+        <span>Projets</span>
+      </div>
+      <div class="dicon" data-window="readme">
+        <img src="img/icons/notepad-3.png" alt="" draggable="false" />
+        <span>README.txt</span>
+      </div>
+      <div class="dicon" data-window="contact">
+        <img src="img/icons/outlook_express-3.png" alt="" draggable="false" />
+        <span>Contact</span>
+      </div>
+      <div class="dicon" data-window="web">
+        <img src="img/icons/html-3.png" alt="" draggable="false" />
+        <span>Internet</span>
+      </div>
+      <div class="dicon" data-window="trash">
+        <img src="img/icons/recycle_bin_empty-3.png" alt="" draggable="false" />
+        <span>Corbeille</span>
       </div>
     </div>
-  </section>
-</main>
+
+    <!-- WINDOWS -->
+    <div id="windows-layer">
+
+      <!-- ABOUT -->
+      <section class="window" id="win-about" data-id="about" style="left:6%;top:8%;width:520px;">
+        <header class="title-bar">
+          <div class="title-text">
+            <img src="img/icons/computer-1.png" alt="" />
+            <span>Mon Ordinateur — Système</span>
+          </div>
+          <div class="title-buttons">
+            <button class="tb-btn" data-act="min">_</button>
+            <button class="tb-btn" data-act="max">▢</button>
+            <button class="tb-btn close" data-act="close">×</button>
+          </div>
+        </header>
+        <div class="menu-bar">
+          <span><u>F</u>ichier</span><span><u>É</u>dition</span><span><u>A</u>ffichage</span><span>A<u>i</u>de</span>
+        </div>
+        <div class="window-body">
+          <div class="sysinfo">
+            <div class="sys-left">
+              <img src="img/icons/computer-5.png" alt="" />
+              <p class="sys-os">Portfolio OS 98</p>
+              <p class="sys-build">Build 0405.2026</p>
+            </div>
+            <div class="sys-right">
+              <h2>Salut, moi c'est <span class="hl">Mathis ROTA</span>.</h2>
+              <p>Je suis étudiant en développement informatique, spécialisé dans le jeu vidéo. J'adore crée du gameplay avec un game design interessant, et je suis très fan d'art et aime crée des choses belles à voir</p>
+              <ul class="specs">
+                <li><b>Langages :</b> C#, C++, Web, Python </li>
+                <li><b>Moteurs :</b> Unity, UE5</li>
+                <li><b>Logiciels :</b>  Photoshop, After Effects, Blender</li>
+                <li><b>Statut :</b> <span class="blink">_disponible</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="status-bar"><span>Prêt</span><span>C:\\USERS\\MATHIS</span></div>
+      </section>
+
+      <!-- PROJECTS — large window, 4 categories -->
+      <section class="window big" id="win-projects" data-id="projects">
+        <header class="title-bar">
+          <div class="title-text">
+            <img src="img/icons/briefcase-1.png" alt="" />
+            <span>Projets — Explorateur</span>
+          </div>
+          <div class="title-buttons">
+            <button class="tb-btn" data-act="min">_</button>
+            <button class="tb-btn" data-act="max">▢</button>
+            <button class="tb-btn close" data-act="close">×</button>
+          </div>
+        </header>
+        <div class="menu-bar">
+          <span><u>F</u>ichier</span><span><u>É</u>dition</span><span><u>A</u>ffichage</span><span><u>O</u>utils</span>
+        </div>
+        <div class="window-body explorer">
+          <aside class="exp-side" id="cat-side">
+            <p class="exp-title">CATÉGORIES</p>
+            <ul>
+              <li class="active" data-cat="games"><img src="img/icons/briefcase-1.png" alt=""/>Games</li>
+              <li data-cat="design"><img src="img/icons/directory_closed-1.png" alt=""/>Design</li>
+              <li data-cat="software"><img src="img/icons/directory_closed-1.png" alt=""/>Software</li>
+              <li data-cat="editing"><img src="img/icons/directory_closed-1.png" alt=""/>Video Editing</li>
+            </ul>
+            <p class="exp-side-foot">fredanie.studio © 2026</p>
+          </aside>
+          <div class="exp-content" id="cat-content">
+            <div class="cat-header">
+              <div class="cat-header-text">
+                <h2 id="cat-title">Games</h2>
+                <p id="cat-sub">Jeux vidéo, prototypes &amp; expérimentations</p>
+              </div>
+              <div class="grid-toggle" id="grid-toggle">
+                <span class="grid-toggle-label">Affichage :</span>
+                <button class="w98-btn grid-btn" data-grid="1" title="1 colonne">1×1</button>
+                <button class="w98-btn grid-btn active" data-grid="2" title="2 colonnes">2×2</button>
+                <button class="w98-btn grid-btn" data-grid="3" title="3 colonnes">3×3</button>
+              </div>
+            </div>
+            <div class="cat-list grid-2" id="cat-list"></div>
+          </div>
+        </div>
+        <div class="status-bar">
+          <span id="cat-count">0 objet(s)</span>
+          <span>fredanie.studio</span>
+        </div>
+      </section>
+
+      <!-- README -->
+      <section class="window" id="win-readme" data-id="readme" style="left:36%;top:18%;width:480px;">
+        <header class="title-bar">
+          <div class="title-text">
+            <img src="img/icons/notepad-1.png" alt="" />
+            <span>README.txt — Bloc-notes</span>
+          </div>
+          <div class="title-buttons">
+            <button class="tb-btn" data-act="min">_</button>
+            <button class="tb-btn" data-act="max">▢</button>
+            <button class="tb-btn close" data-act="close">×</button>
+          </div>
+        </header>
+        <div class="menu-bar">
+          <span><u>F</u>ichier</span><span><u>É</u>dition</span><span>R<u>e</u>chercher</span><span>A<u>i</u>de</span>
+        </div>
+        <div class="window-body">
+          <div class="notepad">
+<pre>=========================================
+   README — Portfolio v1.0
+=========================================
+
+> Bienvenue sur mon portfolio.
+
+Merci pour le temps pris pour à observer mes créations.
+
+[ NAVIGATION ]
+- Double-clic sur les icônes du bureau
+
+[ CONTACT ]
+Ouvre l'icône "Contact" sur le bureau pour me contacter.
+
+[ MES PROJETS ]
+Ouvre l'icône "Projets" sur le bureau pour découvrir mes créations.
 
 
-  <footer>Mathis Rota • Portfolio • 2025</footer>
+— FIN DU FICHIER —
+</pre>
+          </div>
+        </div>
+        <div class="status-bar"><span>Ligne 1, Col 1</span><span>UTF-8</span></div>
+      </section>
 
-  <script>
-    /* ---------------- intro fade ---------------- */
-    window.addEventListener('load', () => {
-      const intro = document.getElementById('intro');
-      setTimeout(() => intro.classList.add('hide'), 1400);
-    });
+      <!-- CONTACT -->
+      <section class="window" id="win-contact" data-id="contact" style="left:54%;top:10%;width:460px;">
+        <header class="title-bar">
+          <div class="title-text">
+            <img src="img/icons/outlook_express-1.png" alt="" />
+            <span>Nouveau message</span>
+          </div>
+          <div class="title-buttons">
+            <button class="tb-btn" data-act="min">_</button>
+            <button class="tb-btn" data-act="max">▢</button>
+            <button class="tb-btn close" data-act="close">×</button>
+          </div>
+        </header>
+        <div class="menu-bar">
+          <span><u>F</u>ichier</span><span><u>É</u>dition</span><span><u>A</u>ffichage</span><span><u>I</u>nsertion</span>
+        </div>
+        <div class="window-body">
+          <form class="mail" onsubmit="event.preventDefault(); alert('Message envoyé via le réseau commuté 56k. Merci !');">
+            <label>À : <input type="email" value="mathi@portfolio.fr" readonly></label>
+            <label>De : <input type="email" required placeholder="ton@mail.com"></label>
+            <label>Objet : <input type="text" required placeholder="On bosse ensemble ?"></label>
+            <textarea rows="6" required placeholder="Écris ton message ici..."></textarea>
+            <div class="mail-actions">
+              <button type="submit" class="w98-btn">Envoyer</button>
+              <button type="reset" class="w98-btn">Effacer</button>
+            </div>
+            <p class="mail-or">— ou trouve-moi sur —</p>
+            <div class="socials">
+              <a class="w98-btn" href="#">GitHub</a>
+              <a class="w98-btn" href="#">Instagram</a>
+              <a class="w98-btn" href="#">LinkedIn</a>
+            </div>
+          </form>
+        </div>
+        <div class="status-bar"><span>Connecté</span><span>56 kbps</span></div>
+      </section>
 
-    /* ---------------- carousel logic ---------------- */
-    document.addEventListener('DOMContentLoaded', () => {
-      const track = document.getElementById('carousel-track');
-      const slides = Array.from(document.querySelectorAll('.carousel-slide'));
-      const dotsContainer = document.getElementById('carousel-dots');
-      const prevButton = document.getElementById('prev-btn');
-      const nextButton = document.getElementById('next-btn');
-      let currentIndex = 0;
-      const totalSlides = slides.length;
+      <!-- WEB -->
+      <section class="window" id="win-web" data-id="web" style="left:14%;top:30%;width:560px;">
+        <header class="title-bar">
+          <div class="title-text">
+            <img src="img/icons/html-1.png" alt="" />
+            <span>Internet — fredanie.net</span>
+          </div>
+          <div class="title-buttons">
+            <button class="tb-btn" data-act="min">_</button>
+            <button class="tb-btn" data-act="max">▢</button>
+            <button class="tb-btn close" data-act="close">×</button>
+          </div>
+        </header>
+        <div class="menu-bar">
+          <span><u>F</u>ichier</span><span><u>É</u>dition</span><span><u>A</u>ffichage</span><span><u>F</u>avoris</span>
+        </div>
+        <div class="address-bar">
+          <span>Adresse :</span>
+          <input type="text" value="http://www.banger.net/index.html" readonly />
+          <button class="w98-btn">OK</button>
+        </div>
+        <div class="window-body web-body">
+          <div class="web-marquee">★ BIENVENUE SUR MON SITE ★ ENORME BANGER ★ VIVE LE 4/3 ★</div>
+          <h1 class="web-h1">~ banger.net ~</h1>
+          <p class="web-p">Cette page est sous construction.</p>
+          <img src="img/icons/application_hourglass-0.png" alt="" class="web-construction"/>
+          <p class="web-counter">Visiteurs : <b>000042</b></p>
+          <hr/>
+          <p class="web-p"><i>Le vrai contenu est dans la fenêtre "Projets". Reviens plus tard.</i></p>
+        </div>
+        <div class="status-bar"><span>Chargement terminé</span><span>🌐 Internet</span></div>
+      </section>
 
-      // create dots
-      slides.forEach((_, i) => {
-        const dot = document.createElement('button');
-        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-        dot.setAttribute('aria-label', `Aller à la slide ${i+1}`);
-        dot.addEventListener('click', () => goToSlide(i));
-        dotsContainer.appendChild(dot);
-      });
-      const dots = Array.from(document.querySelectorAll('.carousel-dot'));
+      <!-- TRASH -->
+      <section class="window" id="win-trash" data-id="trash" style="left:30%;top:35%;width:380px;">
+        <header class="title-bar">
+          <div class="title-text">
+            <img src="img/icons/recycle_bin_empty-1.png" alt="" />
+            <span>Corbeille</span>
+          </div>
+          <div class="title-buttons">
+            <button class="tb-btn" data-act="min">_</button>
+            <button class="tb-btn" data-act="max">▢</button>
+            <button class="tb-btn close" data-act="close">×</button>
+          </div>
+        </header>
+        <div class="window-body trash-body">
+          <p>La corbeille est vide.</p>
+          <p class="muted">(Bah ouai y'a rien.)</p>
+        </div>
+        <div class="status-bar"><span>0 objet(s)</span><span>0 Ko</span></div>
+      </section>
 
-      function updateButtons() {
-        prevButton.disabled = currentIndex === 0;
-        nextButton.disabled = currentIndex === totalSlides - 1;
-      }
+    </div>
 
-      function goToSlide(index) {
-        if (index < 0) index = 0;
-        if (index >= totalSlides) index = totalSlides - 1;
-        currentIndex = index;
-        track.style.transform = `translateX(-${currentIndex * 100}%)`;
-        dots.forEach((d, i) => d.classList.toggle('active', i === currentIndex));
-        updateButtons();
-      }
+    <!-- TASKBAR -->
+    <footer id="taskbar">
+      <button id="start-btn">
+        <img src="img/icons/computer-1.png" alt="" />
+        <b>Démarrer</b>
+      </button>
+      <div class="tb-divider"></div>
+      <div id="taskbar-apps"></div>
+      <div class="tray">
+        <span class="tray-ico">🔊</span>
+        <span class="tray-ico">📶</span>
+        <span id="clock">--:--</span>
+      </div>
+    </footer>
 
-      prevButton.addEventListener('click', () => { if (currentIndex > 0) goToSlide(currentIndex - 1); });
-      nextButton.addEventListener('click', () => { if (currentIndex < totalSlides - 1) goToSlide(currentIndex + 1); });
+    <!-- START MENU -->
+    <div id="start-menu" class="hidden">
+      <div class="sm-side">PORTFOLIO<span>OS&nbsp;98</span></div>
+      <ul class="sm-list">
+        <li data-window="about"><img src="img/icons/computer-1.png" alt=""/><b>Mon Ordinateur</b></li>
+        <li data-window="projects"><img src="img/icons/briefcase-1.png" alt=""/><b>Projets</b></li>
+        <li data-window="readme"><img src="img/icons/notepad-1.png" alt=""/><b>Read-Me</b></li>
+        <li data-window="contact"><img src="img/icons/outlook_express-1.png" alt=""/><b>Contact</b></li>
+        <li data-window="web"><img src="img/icons/html-1.png" alt=""/><b>Internet</b></li>
+        <li class="sep"></li>
+        <li data-action="glitch"><img src="img/icons/file_blue_grad_paint-1.png" alt=""/><b>Activer le glitch</b></li>
+        <li data-action="shutdown"><img src="img/icons/recycle_bin_empty-1.png" alt=""/><b>Arrêter…</b></li>
+      </ul>
+    </div>
 
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft') goToSlide(currentIndex - 1);
-        if (e.key === 'ArrowRight') goToSlide(currentIndex + 1);
-      });
+    <!-- CONTEXT MENU -->
+    <div id="ctx-menu" class="hidden">
+      <ul>
+        <li data-action="refresh">Actualiser</li>
+        <li class="sep"></li>
+        <li data-action="glitch">Activer / désactiver le glitch</li>
+        <li data-action="vhs">Activer / désactiver le VHS</li>
+        <li class="sep"></li>
+        <li data-action="about">Propriétés</li>
+      </ul>
+    </div>
 
-      // Init
-      goToSlide(0);
-      updateButtons();
-    });
+    <!-- SHUTDOWN -->
+    <div id="shutdown" class="hidden">
+      <p>Vous pouvez maintenant éteindre l'ordinateur en toute sécurité.</p>
+      <button class="w98-btn" id="reboot">Redémarrer</button>
+    </div>
 
-    /* ---------------- low-poly background (triangles) ---------------- */
-    (function(){
-      const canvas = document.getElementById('bgCanvas');
-      const ctx = canvas.getContext('2d');
-      let DPR = Math.max(1, window.devicePixelRatio || 1);
+  </div>
 
-      // grid config
-      const cols = 20;
-      const rows = 12;
-      const jitter = 40;
+  <!-- VFX OVERLAYS -->
+  <div class="overlay grain"></div>
+  <div class="overlay scanlines"></div>
+  <div class="overlay vignette"></div>
+  <div class="overlay chaos"></div>
+  <video class="overlay vhs" src="img/overlays/vhs/VHS.mp4" autoplay muted loop playsinline></video>
+  <div class="overlay glitch-rgb"></div>
 
-      let points = [];
-      let tris = [];
-      let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-      let time = 0;
-
-      function resize() {
-        const w = Math.max(window.innerWidth, 300);
-        const h = Math.max(window.innerHeight, 300);
-        canvas.width = Math.floor(w * DPR);
-        canvas.height = Math.floor(h * DPR);
-        canvas.style.width = w + 'px';
-        canvas.style.height = h + 'px';
-        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-        buildGrid(w, h);
-      }
-
-      function buildGrid(w, h) {
-        points = [];
-        tris = [];
-        for (let r = 0; r <= rows; r++) {
-          for (let c = 0; c <= cols; c++) {
-            const x = (c / cols) * w + (Math.random() - 0.5) * jitter;
-            const y = (r / rows) * h + (Math.random() - 0.5) * jitter;
-            points.push({
-              x, y,
-              bx: x, by: y,
-              vx: (Math.random() - 0.5) * 0.6,
-              vy: (Math.random() - 0.5) * 0.6,
-              amp: 6 + Math.random() * 18,
-              phase: Math.random() * Math.PI * 2
-            });
-          }
-        }
-
-        // triangulate each cell
-        for (let r = 0; r < rows; r++) {
-          for (let c = 0; c < cols; c++) {
-            const i = r * (cols + 1) + c;
-            const p00 = i;
-            const p10 = i + 1;
-            const p01 = i + (cols + 1);
-            const p11 = i + (cols + 1) + 1;
-            if (Math.random() < 0.5) {
-              tris.push([p00, p10, p11]);
-              tris.push([p00, p11, p01]);
-            } else {
-              tris.push([p00, p10, p01]);
-              tris.push([p10, p11, p01]);
-            }
-          }
-        }
-      }
-
-      function render() {
-        const w = canvas.width / DPR;
-        const h = canvas.height / DPR;
-        ctx.clearRect(0, 0, w, h);
-
-        // subtle radial background
-        const grd = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, Math.max(w, h) * 0.8);
-        grd.addColorStop(0, 'rgba(255,255,255,0.98)');
-        grd.addColorStop(1, 'rgba(250,250,251,0.92)');
-        ctx.fillStyle = grd;
-        ctx.fillRect(0, 0, w, h);
-
-        time += 0.01;
-        for (let i = 0; i < points.length; i++) {
-          const p = points[i];
-          const nx = p.bx + Math.sin(time * 0.6 + p.phase) * p.amp + Math.sin(i * 0.13 + time * 0.9) * 3;
-          const ny = p.by + Math.cos(time * 0.5 + p.phase) * (p.amp * 0.6) + Math.cos(i * 0.11 + time * 0.7) * 3;
-          const dx = (mouse.x - w / 2) * 0.02 * ((p.bx / w) - 0.5);
-          const dy = (mouse.y - h / 2) * 0.02 * ((p.by / h) - 0.5);
-          p.x = nx + dx;
-          p.y = ny + dy;
-        }
-
-        for (let t = 0; t < tris.length; t++) {
-          const tri = tris[t];
-          const a = points[tri[0]];
-          const b = points[tri[1]];
-          const c = points[tri[2]];
-
-          const midx = (a.x + b.x + c.x) / 3;
-          const midy = (a.y + b.y + c.y) / 3;
-          const dist = Math.hypot(midx - mouse.x, midy - mouse.y);
-          let light = 0.95 - (midy / h) * 0.2 - Math.min(1, dist / (Math.max(w, h) * 0.9)) * 0.06;
-          const shade = Math.round(245 + (((t % 7) - 3) * 2) + (Math.sin(time + t) * 3));
-          const color = `rgb(${shade},${shade},${shade})`;
-
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.lineTo(c.x, c.y);
-          ctx.closePath();
-
-          ctx.fillStyle = color;
-          ctx.globalAlpha = Math.max(0.88, light);
-          ctx.fill();
-
-          ctx.globalAlpha = 0.06;
-          ctx.lineWidth = 1;
-          ctx.strokeStyle = 'black';
-          ctx.stroke();
-          ctx.globalAlpha = 1;
-        }
-
-        requestAnimationFrame(render);
-      }
-
-      // mouse / touch
-      window.addEventListener('mousemove', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        mouse.x = (e.clientX - rect.left);
-        mouse.y = (e.clientY - rect.top);
-      });
-      window.addEventListener('touchmove', (e) => {
-        const t = e.touches[0];
-        if (!t) return;
-        const rect = canvas.getBoundingClientRect();
-        mouse.x = (t.clientX - rect.left);
-        mouse.y = (t.clientY - rect.top);
-      }, { passive: true });
-
-      // responsive
-      window.addEventListener('resize', resize);
-      resize();
-      render();
-
-      // resume rendering when tab becomes visible
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') requestAnimationFrame(render);
-      });
-    })();
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
