@@ -162,7 +162,7 @@ const PROJECTS = {
         "img/work/software/Media Viewer/Capture d’écran 2026-05-04 160129.png",
       ],
       tags: ["Web", "Electron"],
-      download: "#",
+      download: null,
     },
     {
       name: "GD Tracker",
@@ -170,7 +170,7 @@ const PROJECTS = {
       desc: "Petite app pour suivre et noter des niveaux de Geometry Dash, parce que personne d'autre ne l'avait fait.",
       media: ["img/work/software/GD Tracker/img.png"],
       tags: ["Web", "Electron"],
-      download: "#",
+      download: null,
     },
   ],
 
