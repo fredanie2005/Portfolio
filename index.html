@@ -42,6 +42,10 @@
         <img src="img/icons/html-3.png" alt="" draggable="false" />
         <span>Internet</span>
       </div>
+      <div class="dicon" data-window="cv">
+        <img src="img/icons/kodak_imaging_file-1.png" alt="" draggable="false" />
+        <span>CV</span>
+      </div>
       <div class="dicon" data-window="trash">
         <img src="img/icons/recycle_bin_empty-3.png" alt="" draggable="false" />
         <span>Corbeille</span>
@@ -199,7 +203,7 @@ Ouvre l'icône "Projets" sur le bureau pour découvrir mes créations.
         </div>
         <div class="window-body">
           <form class="mail" onsubmit="event.preventDefault(); alert('Message envoyé via le réseau commuté 56k. Merci !');">
-            <label>À : <input type="email" value="mathi@portfolio.fr" readonly></label>
+            <label>À : <input type="email" value="mrota@gaming.tech" readonly></label>
             <label>De : <input type="email" required placeholder="ton@mail.com"></label>
             <label>Objet : <input type="text" required placeholder="On bosse ensemble ?"></label>
             <textarea rows="6" required placeholder="Écris ton message ici..."></textarea>
@@ -209,9 +213,10 @@ Ouvre l'icône "Projets" sur le bureau pour découvrir mes créations.
             </div>
             <p class="mail-or">— ou trouve-moi sur —</p>
             <div class="socials">
-              <a class="w98-btn" href="#">GitHub</a>
-              <a class="w98-btn" href="#">Instagram</a>
-              <a class="w98-btn" href="#">LinkedIn</a>
+              <a class="w98-btn" href="https://github.com/fredanie2005" target="_blank" rel="noopener">Github</a>
+              <a class="w98-btn" href="https://www.youtube.com/@masterroyal_" target="_blank" rel="noopener">YouTube</a>
+              <a class="w98-btn" href="mailto:mrota@gaming.tech">Email</a>
+              <a class="w98-btn" href="https://www.linkedin.com/in/mathis-rota/" target="_blank" rel="noopener">LinkedIn</a>
             </div>
           </form>
         </div>
@@ -249,6 +254,35 @@ Ouvre l'icône "Projets" sur le bureau pour découvrir mes créations.
           <p class="web-p"><i>Le vrai contenu est dans la fenêtre "Projets". Reviens plus tard.</i></p>
         </div>
         <div class="status-bar"><span>Chargement terminé</span><span>🌐 Internet</span></div>
+      </section>
+
+      <!-- CV -->
+      <section class="window" id="win-cv" data-id="cv" style="left:18%;top:10%;width:640px;">
+        <header class="title-bar">
+          <div class="title-text">
+            <img src="img/icons/kodak_imaging_file-1.png" alt="" />
+            <span>CV.pdf</span>
+          </div>
+          <div class="title-buttons">
+            <button class="tb-btn" data-act="min">_</button>
+            <button class="tb-btn" data-act="max">▢</button>
+            <button class="tb-btn close" data-act="close">×</button>
+          </div>
+        </header>
+        <div class="menu-bar">
+          <span><u>F</u>ichier</span><span><u>É</u>dition</span><span><u>A</u>ffichage</span><span>A<u>i</u>de</span>
+        </div>
+        <div class="window-body cv-body">
+          <div class="cv-toolbar">
+            <span class="cv-tool-label">Page :</span>
+            <span class="cv-tool-info">CV.pdf</span>
+            <a class="w98-btn cv-dl" href="img/cv/CV.pdf" target="_blank" rel="noopener">⬇ Télécharger</a>
+          </div>
+          <div class="cv-viewport">
+            <iframe class="cv-frame" src="img/cv/CV.pdf#toolbar=0&navpanes=0&view=FitH" title="CV de Mathis ROTA"></iframe>
+          </div>
+        </div>
+        <div class="status-bar"><span>1 document</span><span>CV.pdf</span></div>
       </section>
 
       <!-- TRASH -->
@@ -296,6 +330,7 @@ Ouvre l'icône "Projets" sur le bureau pour découvrir mes créations.
         <li data-window="projects"><img src="img/icons/briefcase-1.png" alt=""/><b>Projets</b></li>
         <li data-window="readme"><img src="img/icons/notepad-1.png" alt=""/><b>Read-Me</b></li>
         <li data-window="contact"><img src="img/icons/outlook_express-1.png" alt=""/><b>Contact</b></li>
+        <li data-window="cv"><img src="img/icons/kodak_imaging_file-1.png" alt=""/><b>CV</b></li>
         <li data-window="web"><img src="img/icons/html-1.png" alt=""/><b>Internet</b></li>
         <li class="sep"></li>
         <li data-action="glitch"><img src="img/icons/file_blue_grad_paint-1.png" alt=""/><b>Activer le glitch</b></li>

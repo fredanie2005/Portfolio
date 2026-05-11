@@ -28,7 +28,7 @@ const PROJECTS = {
       name: "Angry Birds UE5",
       date: "2026",
       desc: "Test de la physique d'Unreal Engine 5 à travers un remake amélioré d'Angry Birds.",
-      media: ["img/work/game/Angry Birds/angry.gif"],
+      media: ["img/work/game/Angry Birds/angry.mp4"],
       tags: ["Unreal Engine 5", "Blueprint"],
       download: null,
     },
@@ -37,7 +37,7 @@ const PROJECTS = {
       date: "2026",
       desc: "Fan game FNAF où l'on doit survivre et accomplir des objectifs dans la map du jeu original, avec des graphismes VHS réalistes.",
       media: ["img/work/game/FNAF/Video Project 13.gif"],
-      tags: ["Unreal Engine 5", "Blueprint", "C#"],
+      tags: ["Unreal Engine 5", "Blueprint", "C++"],
       download: null,
     },
 
@@ -104,7 +104,7 @@ const PROJECTS = {
       name: "Honkai Star Rail 2",
       date: "2024",
       desc: "Jeu de combat au tour par tour inspiré de HSR, développé sur Ren'Py, un moteur de visual novel.",
-      media: ["img/work/game/HSR2/Enregistrement 2026-05-04 153204.gif"],
+      media: ["img/work/game/HSR2/a.gif"],
       tags: ["Python", "Ren'Py"],
       download: null,
     },
@@ -207,22 +207,17 @@ function buildBootLines() {
   ];
 
   const cats = [
-    ["games",    "Games",    PROJECTS.games],
-    ["design",   "Design",   PROJECTS.design],
-    ["software", "Software", PROJECTS.software],
+    ["games",    PROJECTS.games],
+    ["design",   PROJECTS.design],
+    ["software", PROJECTS.software],
   ];
 
-  cats.forEach(([key, label, items]) => {
-    lines.push(`[ MOUNT ] /portfolio/${key.padEnd(8)} (${items.length} entries)`);
-    items.forEach(p => {
-      const name = p.name.length > 32 ? p.name.slice(0, 31) + "…" : p.name;
-      lines.push(`   > loading "${name}" ... OK`);
-    });
+  cats.forEach(([key, items]) => {
+    lines.push(`[ OK ] /portfolio/${key.padEnd(8)} (${items.length} entries)`);
   });
 
   const yt = PROJECTS.editing;
-  lines.push(`[ MOUNT ] /portfolio/editing`);
-  lines.push(`   > connecting to youtube ${yt.handle} ... OK`);
+  lines.push(`[ OK ] /portfolio/editing  -> youtube ${yt.handle}`);
 
   lines.push("");
   lines.push("All systems nominal.");
@@ -248,13 +243,9 @@ function bootStep() {
   }
   const line = bootLines[bootI];
   bootEl.textContent += line + "\n";
-  // auto-scroll to bottom
-  bootEl.parentElement.scrollTop = bootEl.parentElement.scrollHeight;
+  bootScreen.scrollTop = bootScreen.scrollHeight;
   bootI++;
-  // project-loading lines run faster so the list scrolls quickly
-  const delay = line.startsWith("   > loading") || line.startsWith("   > connecting")
-    ? 25 + Math.random() * 35
-    : 60 + Math.random() * 110;
+  const delay = 60 + Math.random() * 110;
   setTimeout(bootStep, delay);
 }
 bootStep();
