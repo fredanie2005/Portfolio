@@ -587,6 +587,47 @@ windows.forEach(win => {
     bar.addEventListener("pointerup", up);
     bar.addEventListener("pointercancel", up);
   });
+
+  if (win.classList.contains("big")) {
+    const handle = document.createElement("div");
+    handle.className = "resize-handle";
+    handle.title = "Redimensionner";
+    win.appendChild(handle);
+
+    handle.addEventListener("pointerdown", e => {
+      if (win.classList.contains("maximized")) return;
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      e.preventDefault();
+      e.stopPropagation();
+      focusWindow(win);
+
+      const rect = win.getBoundingClientRect();
+      const startX = e.clientX;
+      const startY = e.clientY;
+      const startW = rect.width;
+      const startH = rect.height;
+
+      try { handle.setPointerCapture(e.pointerId); } catch (_) {}
+
+      function rmove(ev) {
+        const dx = ev.clientX - startX;
+        const dy = ev.clientY - startY;
+        const w = Math.max(320, Math.min(window.innerWidth - rect.left - 8, startW + dx));
+        const h = Math.max(220, Math.min(window.innerHeight - rect.top - 40, startH + dy));
+        win.style.width = w + "px";
+        win.style.height = h + "px";
+        win.style.maxWidth = "none";
+      }
+      function rup() {
+        handle.removeEventListener("pointermove", rmove);
+        handle.removeEventListener("pointerup", rup);
+        handle.removeEventListener("pointercancel", rup);
+      }
+      handle.addEventListener("pointermove", rmove);
+      handle.addEventListener("pointerup", rup);
+      handle.addEventListener("pointercancel", rup);
+    });
+  }
 });
 
 /* =============================================================
