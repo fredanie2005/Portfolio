@@ -514,7 +514,7 @@ function toggleMaximize(win) {
 }
 
 windows.forEach(win => {
-  win.addEventListener("mousedown", () => focusWindow(win));
+  win.addEventListener("pointerdown", () => focusWindow(win));
 
   win.querySelectorAll(".tb-btn").forEach(btn => {
     btn.addEventListener("click", e => {
@@ -527,17 +527,32 @@ windows.forEach(win => {
   });
 
   const bar = win.querySelector(".title-bar");
-  bar.addEventListener("mousedown", e => {
+  let lastTapTime = 0;
+
+  bar.addEventListener("pointerdown", e => {
     if (e.target.closest(".tb-btn")) return;
-    if (win.classList.contains("maximized")) return;
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+
     e.preventDefault();
     focusWindow(win);
+
+    const isMaximized = win.classList.contains("maximized");
     const rect = win.getBoundingClientRect();
     const offX = e.clientX - rect.left;
     const offY = e.clientY - rect.top;
-    bar.style.cursor = "grabbing";
+    const startX = e.clientX;
+    const startY = e.clientY;
+    let dragging = false;
+
+    if (!isMaximized) bar.style.cursor = "grabbing";
+    try { bar.setPointerCapture(e.pointerId); } catch (_) {}
 
     function move(ev) {
+      if (isMaximized) return;
+      const dx = ev.clientX - startX;
+      const dy = ev.clientY - startY;
+      if (!dragging && Math.abs(dx) < 5 && Math.abs(dy) < 5) return;
+      dragging = true;
       let x = ev.clientX - offX;
       let y = ev.clientY - offY;
       x = Math.max(-rect.width + 60, Math.min(window.innerWidth - 30, x));
@@ -548,16 +563,23 @@ windows.forEach(win => {
     }
     function up() {
       bar.style.cursor = "grab";
-      document.removeEventListener("mousemove", move);
-      document.removeEventListener("mouseup", up);
-    }
-    document.addEventListener("mousemove", move);
-    document.addEventListener("mouseup", up);
-  });
+      bar.removeEventListener("pointermove", move);
+      bar.removeEventListener("pointerup", up);
+      bar.removeEventListener("pointercancel", up);
 
-  bar.addEventListener("dblclick", e => {
-    if (e.target.closest(".tb-btn")) return;
-    toggleMaximize(win);
+      if (!dragging) {
+        const now = Date.now();
+        if (now - lastTapTime < 400) {
+          toggleMaximize(win);
+          lastTapTime = 0;
+        } else {
+          lastTapTime = now;
+        }
+      }
+    }
+    bar.addEventListener("pointermove", move);
+    bar.addEventListener("pointerup", up);
+    bar.addEventListener("pointercancel", up);
   });
 });
 
@@ -565,14 +587,26 @@ windows.forEach(win => {
    DESKTOP ICONS
    ============================================================= */
 const dicons = document.querySelectorAll(".dicon");
+let iconLastTap = 0;
+let iconLastTarget = null;
+
 dicons.forEach(ic => {
   ic.addEventListener("click", () => {
     dicons.forEach(d => d.classList.remove("selected"));
     ic.classList.add("selected");
+
+    const now = Date.now();
+    if (iconLastTarget === ic && now - iconLastTap < 500) {
+      openWindow(ic.dataset.window);
+      iconLastTap = 0;
+      iconLastTarget = null;
+    } else {
+      iconLastTap = now;
+      iconLastTarget = ic;
+    }
   });
-  ic.addEventListener("dblclick", () => openWindow(ic.dataset.window));
 });
-desktop.addEventListener("mousedown", e => {
+desktop.addEventListener("pointerdown", e => {
   if (!e.target.closest(".dicon") && !e.target.closest(".window") &&
       !e.target.closest("#taskbar") && !e.target.closest("#start-menu")) {
     dicons.forEach(d => d.classList.remove("selected"));

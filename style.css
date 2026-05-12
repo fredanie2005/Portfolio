@@ -23,6 +23,16 @@ body {
 
 .hidden { display: none !important; }
 
+/* mobile / touch */
+.dicon, .tb-btn, .w98-btn, .grid-btn,
+.sm-list li, .tb-app, .exp-side li, .media-prev, .media-next,
+.media-dot, #start-btn, #ctx-menu li, .menu-bar span,
+.title-buttons button, .tray-ico {
+  touch-action: manipulation;
+}
+.title-bar { touch-action: none; }
+.window-body, .exp-content, .notepad { -webkit-overflow-scrolling: touch; }
+
 /* ===========================================================
    BOOT SCREEN
    =========================================================== */
@@ -403,13 +413,6 @@ textarea { resize: vertical; }
 .cat-list.grid-1 { grid-template-columns: 1fr; }
 .cat-list.grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .cat-list.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-@media (max-width: 900px) {
-  .cat-list.grid-2 { grid-template-columns: 1fr; }
-  .cat-list.grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (max-width: 600px) {
-  .cat-list.grid-3 { grid-template-columns: 1fr; }
-}
 
 .proj-card {
   display: flex;
@@ -977,8 +980,21 @@ body.glitch .glitch-rgb {
   .sysinfo { flex-direction: column; }
   .sys-left { width: 100%; }
   .explorer { flex-direction: column; }
-  .exp-side { width: 100%; border-right: none; border-bottom: 1px solid #808080; }
+  .exp-side { width: 100%; border-right: none; border-bottom: 1px solid #808080; padding: 4px 0; flex: 0 0 auto; }
   .exp-side ul { display: flex; overflow-x: auto; }
   .exp-side li { white-space: nowrap; }
-  .cat-list { grid-template-columns: 1fr; }
+  .exp-side .exp-title, .exp-side-foot { display: none; }
+  .cat-header { padding: 10px 12px; gap: 8px; }
+  .cat-header h2 { font-size: 16px; }
+  .cat-header p { font-size: 11px; }
+  .grid-toggle-label { display: none; }
+  .grid-btn { min-width: 36px; padding: 2px 6px; }
+  .cat-list { padding: 8px; gap: 8px; }
+  .proj-card { padding: 6px; gap: 6px; }
+  .proj-meta { gap: 6px; }
+  .proj-meta h3 { font-size: 13px; }
+  .proj-date { font-size: 10px; }
+  .proj-tags span { font-size: 9px; padding: 1px 4px; }
+  .proj-desc { font-size: 11px; line-height: 1.35; }
+  .media-prev, .media-next { width: 22px; height: 30px; font-size: 14px; }
 }
