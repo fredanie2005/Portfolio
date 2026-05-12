@@ -359,9 +359,13 @@ function buildProjectCard(p) {
       d.dataset.idx = i;
       dots.appendChild(d);
     });
+    const counter = document.createElement("div");
+    counter.className = "media-counter";
+    counter.textContent = `1/${p.media.length}`;
     mediaWrap.appendChild(prev);
     mediaWrap.appendChild(next);
     mediaWrap.appendChild(dots);
+    mediaWrap.appendChild(counter);
   }
 
   // info
@@ -394,6 +398,7 @@ function initCarousel(card) {
   const items = card.querySelectorAll(".media-track > *");
   if (items.length <= 1) return;
   const dots = card.querySelectorAll(".media-dot");
+  const counter = card.querySelector(".media-counter");
   let idx = 0;
   let timer = null;
 
@@ -401,6 +406,7 @@ function initCarousel(card) {
     idx = (i + items.length) % items.length;
     items.forEach((el, k) => el.classList.toggle("active", k === idx));
     dots.forEach((d, k) => d.classList.toggle("active", k === idx));
+    if (counter) counter.textContent = `${idx + 1}/${items.length}`;
     // pause/play videos
     items.forEach((el, k) => {
       if (el.tagName === "VIDEO") {
