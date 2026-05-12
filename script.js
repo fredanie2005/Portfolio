@@ -145,7 +145,7 @@ const PROJECTS = {
     {
       name: "Modélisation 3D",
       date: "2023 - Maintenant",
-      desc: "Apprentissage des bases de Blender pour créer et produire mes propres assets 3D, en maîtrisant la modélisation et le rendu.",
+      desc: "Apprentissage des bases de Blender pour créer et produire mes propres assets 3D",
       media: ["img/work/art/Blender/blender.webp"],
       tags: ["Blender"],
       download: null,
