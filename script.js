@@ -12,7 +12,7 @@ const PROJECTS = {
       name: "DNA",
       date: "2026",
       desc: "Projet en collaboration : hack and slash d'horreur lovecraftienne au gameplay dynamique.",
-      media: ["img/work/game/DNA/Video Project 10.mp4"],
+      media: ["img/work/game/DNA/Video Project 10.mp4","img/work/game/DNA/f.mp4"],
       tags: ["Unity", "C#"],
       download: null,
     },
